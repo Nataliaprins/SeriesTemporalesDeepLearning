@@ -98,6 +98,9 @@ venv/
 # mkdocs documentation
 /site
 
+# Sphinx documentation
+docs/build/
+
 # mypy
 .mypy_cache/
 .dmypy.json
