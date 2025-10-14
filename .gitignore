@@ -11,7 +11,8 @@ __pycache__/
 *$py.class
 *.so
 .Python
-build/
+notebooks/
+source/
 develop-eggs/
 dist/
 downloads/
@@ -98,8 +99,8 @@ venv/
 # mkdocs documentation
 /site
 
-# Sphinx documentation
-docs/build/
+#sphinx documentation
+docs/source
 
 # mypy
 .mypy_cache/

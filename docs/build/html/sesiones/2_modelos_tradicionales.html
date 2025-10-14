@@ -1,0 +1,1067 @@
+
+<!DOCTYPE html>
+
+
+<html lang="es" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2. Pronósticos con Modelos Tradicionales &#8212; documentación de cursos - 1.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=4936afed"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/translations.js?v=f85f4cfb"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'sesiones/2_modelos_tradicionales';</script>
+    <link rel="index" title="Índice" href="../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../search.html" />
+    <link rel="next" title="Recursos Adicionales" href="../recursos.html" />
+    <link rel="prev" title="1. Fundamentos de Series de Tiempo" href="1_introduccion_series_tiempo.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="es"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Saltar al contenido principal</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Volver arriba</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Advertencia de versión"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Navegación del sitio">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">documentación de cursos - 1.0</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../introduccion.html">
+    Introducción
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../instalacion.html">
+    Instalación y Configuración
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Sesiones
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../recursos.html">
+    Recursos Adicionales
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../faq.html">
+    Preguntas Frecuentes (FAQ)
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../glosario.html">
+    Glosario
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Nataliaprins/SeriesTemporalesDeepLearning" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Búsqueda</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="En esta página">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../introduccion.html">
+    Introducción
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../instalacion.html">
+    Instalación y Configuración
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Sesiones
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../recursos.html">
+    Recursos Adicionales
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../faq.html">
+    Preguntas Frecuentes (FAQ)
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glosario.html">
+    Glosario
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Nataliaprins/SeriesTemporalesDeepLearning" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Navegación del sección">
+  <p class="bd-links__title" role="heading" aria-level="1">Navegación del sección</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="1_introduccion_series_tiempo.html">1. Fundamentos de Series de Tiempo</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">2. Pronósticos con Modelos Tradicionales</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Miga de pan" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Inicio">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Sesiones</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis"><span class="section-number">2. </span>Pronósticos con Modelos Tradicionales</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="pronosticos-con-modelos-tradicionales">
+<h1><span class="section-number">2. </span>Pronósticos con Modelos Tradicionales<a class="headerlink" href="#pronosticos-con-modelos-tradicionales" title="Link to this heading">#</a></h1>
+<p>Ya conocemos que la serie de CO2 requiere tratamientos especiales debido
+a que es una serie <strong>No estacionaria</strong>, por tanto de diferenciará en
+primer orden</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Obtener los datos</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">co2</span><span class="o">.</span><span class="n">load_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
+<span class="c1"># Convertir el índice a datetime</span>
+<span class="n">data</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">asfreq</span><span class="p">(</span><span class="s2">&quot;W-SAT&quot;</span><span class="p">)</span>
+
+<span class="c1">#convertiremos la serie a frecuencia mensual</span>
+<span class="n">y_m</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;co2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;MS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">interpolate</span><span class="p">()</span>  <span class="c1"># mensual, inicio de mes</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">y_m</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">})</span>
+
+
+<span class="c1"># diferenciar la serie para hacerla estacionaria</span>
+<span class="n">y_diff</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">df_diff</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;y_diff&quot;</span><span class="p">:</span> <span class="n">y_diff</span><span class="p">})</span>
+<span class="n">df_diff</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                     <span class="n">y</span>
+<span class="mi">1958</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">01</span>  <span class="mf">316.100000</span>
+<span class="mi">1958</span><span class="o">-</span><span class="mi">04</span><span class="o">-</span><span class="mi">01</span>  <span class="mf">317.200000</span>
+<span class="mi">1958</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">01</span>  <span class="mf">317.433333</span>
+<span class="mi">1958</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">01</span>  <span class="mf">316.529167</span>
+<span class="mi">1958</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">01</span>  <span class="mf">315.625000</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>y_diff</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1958-04-01</th>
+      <td>1.100000</td>
+    </tr>
+    <tr>
+      <th>1958-05-01</th>
+      <td>0.233333</td>
+    </tr>
+    <tr>
+      <th>1958-06-01</th>
+      <td>-0.904167</td>
+    </tr>
+    <tr>
+      <th>1958-07-01</th>
+      <td>-0.904167</td>
+    </tr>
+    <tr>
+      <th>1958-08-01</th>
+      <td>-0.675000</td>
+    </tr>
+  </tbody>
+</table>
+</div><div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">plotly.subplots</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_subplots</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+
+<span class="c1"># Crear subplots con dos gráficos uno encima del otro</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">make_subplots</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">subplot_titles</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Serie Original&quot;</span><span class="p">,</span> <span class="s2">&quot;Serie en Diferencias&quot;</span><span class="p">))</span>
+
+<span class="c1"># Agregar la serie original al primer gráfico</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Serie Original&quot;</span><span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Agregar la serie en diferencias al segundo gráfico</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">y_diff</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y_diff</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Serie en Diferencias&quot;</span><span class="p">),</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Configurar el diseño del gráfico</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+    <span class="n">title_text</span><span class="o">=</span><span class="s2">&quot;Comparación de la Serie Original y la Serie en Diferencias&quot;</span><span class="p">,</span>
+    <span class="n">xaxis_title</span><span class="o">=</span><span class="s2">&quot;Fecha&quot;</span><span class="p">,</span>
+    <span class="n">yaxis_title</span><span class="o">=</span><span class="s2">&quot;Valor&quot;</span><span class="p">,</span>
+    <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../_images/comparacion_diff.png" src="../_images/comparacion_diff.png" />
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Split: últimos 60 meses como test</span>
+<span class="n">H</span> <span class="o">=</span> <span class="mi">60</span>
+<span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">y_diff</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="o">-</span><span class="n">H</span><span class="p">],</span> <span class="n">y_diff</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="n">H</span><span class="p">:]</span>
+</pre></div>
+</div>
+<p>Aunque ya sabemos que se requiere de un modelo con estacionalidad,
+ajustaremos otros para comparar, comencemos con un modelo AR de orden 1.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.ar_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoReg</span>
+
+<span class="c1"># Ajustar el modelo AR(1)</span>
+<span class="n">model_ar1</span> <span class="o">=</span> <span class="n">AutoReg</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="c1"># Mostrar el resumen del modelo</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model_ar1</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                            <span class="n">AutoReg</span> <span class="n">Model</span> <span class="n">Results</span>
+<span class="o">==============================================================================</span>
+<span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>                    <span class="n">co2</span>   <span class="n">No</span><span class="o">.</span> <span class="n">Observations</span><span class="p">:</span>                  <span class="mi">465</span>
+<span class="n">Model</span><span class="p">:</span>                     <span class="n">AutoReg</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>   <span class="n">Log</span> <span class="n">Likelihood</span>                <span class="o">-</span><span class="mf">573.624</span>
+<span class="n">Method</span><span class="p">:</span>               <span class="n">Conditional</span> <span class="n">MLE</span>   <span class="n">S</span><span class="o">.</span><span class="n">D</span><span class="o">.</span> <span class="n">of</span> <span class="n">innovations</span>              <span class="mf">0.833</span>
+<span class="n">Date</span><span class="p">:</span>                <span class="n">Mon</span><span class="p">,</span> <span class="mi">13</span> <span class="n">Oct</span> <span class="mi">2025</span>   <span class="n">AIC</span>                           <span class="mf">1153.248</span>
+<span class="n">Time</span><span class="p">:</span>                        <span class="mi">18</span><span class="p">:</span><span class="mi">14</span><span class="p">:</span><span class="mi">29</span>   <span class="n">BIC</span>                           <span class="mf">1165.667</span>
+<span class="n">Sample</span><span class="p">:</span>                    <span class="mi">05</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">1958</span>   <span class="n">HQIC</span>                          <span class="mf">1158.136</span>
+                         <span class="o">-</span> <span class="mi">12</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">1996</span>
+<span class="o">==============================================================================</span>
+                 <span class="n">coef</span>    <span class="n">std</span> <span class="n">err</span>          <span class="n">z</span>      <span class="n">P</span><span class="o">&gt;|</span><span class="n">z</span><span class="o">|</span>      <span class="p">[</span><span class="mf">0.025</span>      <span class="mf">0.975</span><span class="p">]</span>
+<span class="o">------------------------------------------------------------------------------</span>
+<span class="n">const</span>          <span class="mf">0.0293</span>      <span class="mf">0.039</span>      <span class="mf">0.755</span>      <span class="mf">0.450</span>      <span class="o">-</span><span class="mf">0.047</span>       <span class="mf">0.105</span>
+<span class="n">co2</span><span class="o">.</span><span class="n">L1</span>         <span class="mf">0.7075</span>      <span class="mf">0.033</span>     <span class="mf">21.521</span>      <span class="mf">0.000</span>       <span class="mf">0.643</span>       <span class="mf">0.772</span>
+                                    <span class="n">Roots</span>
+<span class="o">=============================================================================</span>
+                  <span class="n">Real</span>          <span class="n">Imaginary</span>           <span class="n">Modulus</span>         <span class="n">Frequency</span>
+<span class="o">-----------------------------------------------------------------------------</span>
+<span class="n">AR</span><span class="mf">.1</span>            <span class="mf">1.4134</span>           <span class="o">+</span><span class="mf">0.0000</span><span class="n">j</span>            <span class="mf">1.4134</span>            <span class="mf">0.0000</span>
+<span class="o">-----------------------------------------------------------------------------</span>
+</pre></div>
+</div>
+<section id="analisis-de-residuales">
+<h2><span class="section-number">2.1. </span>Análisis de Residuales<a class="headerlink" href="#analisis-de-residuales" title="Link to this heading">#</a></h2>
+<p>Analizamos los residuales del modelo para garantizar que exista
+<strong>homocedasticidad</strong></p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Extraer los residuales</span>
+<span class="n">residuals</span> <span class="o">=</span> <span class="n">model_ar1</span><span class="o">.</span><span class="n">resid</span>
+<span class="c1"># Graficar los residuales con plotly</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">residuals</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">residuals</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;markers&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Residuales&#39;</span><span class="p">))</span>
+<span class="c1"># Agregar una línea en y=0</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">residuals</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">residuals</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Residuales del Modelo AR(1)&#39;</span><span class="p">,</span> <span class="n">xaxis_title</span><span class="o">=</span><span class="s1">&#39;Fecha&#39;</span><span class="p">,</span> <span class="n">yaxis_title</span><span class="o">=</span><span class="s1">&#39;Residuales&#39;</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../_images/resuduales_ar.png" src="../_images/resuduales_ar.png" />
+<p>La gráfica de residuales del modelo AR(1) muestra que los errores se
+distribuyen aproximadamente alrededor de cero sin tendencia visible ni
+patrones sistemáticos, lo que sugiere que el modelo ha capturado parte
+importante de la dinámica temporal de la serie. Sin embargo, aún pueden
+observarse algunas concentraciones o posibles autocorrelaciones leves.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.stats.diagnostic</span><span class="w"> </span><span class="kn">import</span> <span class="n">acorr_ljungbox</span>
+
+<span class="c1"># Realizar la prueba de Ljung-Box sobre los residuales</span>
+<span class="n">ljung_box_result</span> <span class="o">=</span> <span class="n">acorr_ljungbox</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Mostrar los resultados</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ljung_box_result</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>      <span class="n">lb_stat</span>     <span class="n">lb_pvalue</span>
+<span class="mi">10</span>  <span class="mf">290.22345</span>  <span class="mf">1.808968e-56</span>
+</pre></div>
+</div>
+<p>Los resultados de la prueba de Ljung–Box (LB = 290.22, p ≈ 1.8 × 10⁻⁵⁶)
+indican que los residuales del modelo AR presentan autocorrelación
+significativa, ya que el p-valor es mucho menor que 0.05. Por tanto, se
+rechaza la hipótesis nula de independencia y se concluye que los errores
+no son ruido blanco, lo que sugiere que el modelo AR(1) no captura
+completamente la dinámica temporal de la serie y requiere una
+especificación más compleja (por ejemplo, aumentar el orden AR o
+incorporar componentes MA o estacionales)</p>
+<section id="isertemos-el-componente-ma-arma-1-1">
+<h3><span class="section-number">2.1.1. </span>Isertemos el componente MA (ARMA (1,1))<a class="headerlink" href="#isertemos-el-componente-ma-arma-1-1" title="Link to this heading">#</a></h3>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.arima.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ARIMA</span>
+
+<span class="c1"># Ajustar el modelo ARMA(1,1)</span>
+<span class="n">model_arma11</span> <span class="o">=</span> <span class="n">ARIMA</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="c1"># Mostrar el resumen del modelo</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model_arma11</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                               <span class="n">SARIMAX</span> <span class="n">Results</span>
+<span class="o">==============================================================================</span>
+<span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>                    <span class="n">co2</span>   <span class="n">No</span><span class="o">.</span> <span class="n">Observations</span><span class="p">:</span>                  <span class="mi">465</span>
+<span class="n">Model</span><span class="p">:</span>                 <span class="n">ARIMA</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>   <span class="n">Log</span> <span class="n">Likelihood</span>                <span class="o">-</span><span class="mf">546.117</span>
+<span class="n">Date</span><span class="p">:</span>                <span class="n">Tue</span><span class="p">,</span> <span class="mi">14</span> <span class="n">Oct</span> <span class="mi">2025</span>   <span class="n">AIC</span>                           <span class="mf">1100.234</span>
+<span class="n">Time</span><span class="p">:</span>                        <span class="mi">12</span><span class="p">:</span><span class="mi">18</span><span class="p">:</span><span class="mi">16</span>   <span class="n">BIC</span>                           <span class="mf">1116.802</span>
+<span class="n">Sample</span><span class="p">:</span>                    <span class="mi">04</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">1958</span>   <span class="n">HQIC</span>                          <span class="mf">1106.755</span>
+                         <span class="o">-</span> <span class="mi">12</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">1996</span>
+<span class="n">Covariance</span> <span class="n">Type</span><span class="p">:</span>                  <span class="n">opg</span>
+<span class="o">==============================================================================</span>
+                 <span class="n">coef</span>    <span class="n">std</span> <span class="n">err</span>          <span class="n">z</span>      <span class="n">P</span><span class="o">&gt;|</span><span class="n">z</span><span class="o">|</span>      <span class="p">[</span><span class="mf">0.025</span>      <span class="mf">0.975</span><span class="p">]</span>
+<span class="o">------------------------------------------------------------------------------</span>
+<span class="n">const</span>          <span class="mf">0.1095</span>      <span class="mf">0.121</span>      <span class="mf">0.902</span>      <span class="mf">0.367</span>      <span class="o">-</span><span class="mf">0.128</span>       <span class="mf">0.347</span>
+<span class="n">ar</span><span class="o">.</span><span class="n">L1</span>          <span class="mf">0.5790</span>      <span class="mf">0.055</span>     <span class="mf">10.611</span>      <span class="mf">0.000</span>       <span class="mf">0.472</span>       <span class="mf">0.686</span>
+<span class="n">ma</span><span class="o">.</span><span class="n">L1</span>          <span class="mf">0.3385</span>      <span class="mf">0.062</span>      <span class="mf">5.462</span>      <span class="mf">0.000</span>       <span class="mf">0.217</span>       <span class="mf">0.460</span>
+<span class="n">sigma2</span>         <span class="mf">0.6121</span>      <span class="mf">0.047</span>     <span class="mf">12.896</span>      <span class="mf">0.000</span>       <span class="mf">0.519</span>       <span class="mf">0.705</span>
+<span class="o">===================================================================================</span>
+<span class="n">Ljung</span><span class="o">-</span><span class="n">Box</span> <span class="p">(</span><span class="n">L1</span><span class="p">)</span> <span class="p">(</span><span class="n">Q</span><span class="p">):</span>                   <span class="mf">3.15</span>   <span class="n">Jarque</span><span class="o">-</span><span class="n">Bera</span> <span class="p">(</span><span class="n">JB</span><span class="p">):</span>                 <span class="mf">4.64</span>
+<span class="n">Prob</span><span class="p">(</span><span class="n">Q</span><span class="p">):</span>                              <span class="mf">0.08</span>   <span class="n">Prob</span><span class="p">(</span><span class="n">JB</span><span class="p">):</span>                         <span class="mf">0.10</span>
+<span class="n">Heteroskedasticity</span> <span class="p">(</span><span class="n">H</span><span class="p">):</span>               <span class="mf">1.11</span>   <span class="n">Skew</span><span class="p">:</span>                             <span class="mf">0.12</span>
+<span class="n">Prob</span><span class="p">(</span><span class="n">H</span><span class="p">)</span> <span class="p">(</span><span class="n">two</span><span class="o">-</span><span class="n">sided</span><span class="p">):</span>                  <span class="mf">0.52</span>   <span class="n">Kurtosis</span><span class="p">:</span>                         <span class="mf">2.57</span>
+<span class="o">===================================================================================</span>
+
+<span class="n">Warnings</span><span class="p">:</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="n">Covariance</span> <span class="n">matrix</span> <span class="n">calculated</span> <span class="n">using</span> <span class="n">the</span> <span class="n">outer</span> <span class="n">product</span> <span class="n">of</span> <span class="n">gradients</span> <span class="p">(</span><span class="nb">complex</span><span class="o">-</span><span class="n">step</span><span class="p">)</span><span class="o">.</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="comportamiento-de-los-residuales">
+<h2><span class="section-number">2.2. </span>Comportamiento de los Residuales<a class="headerlink" href="#comportamiento-de-los-residuales" title="Link to this heading">#</a></h2>
+<p>Los residuales de un modelo deben comportarse como <strong>ruido blanco</strong>, lo
+que significa que no deben presentar autocorrelación ni patrones
+sistemáticos. Matemáticamente, esto se expresa como:</p>
+<div class="math notranslate nohighlight">
+\[E[\epsilon_t] = 0, \quad \text{Var}(\epsilon_t) = \sigma^2, \quad \text{Cov}(\epsilon_t, \epsilon_{t-k}) = 0 \; \forall k \neq 0\]</div>
+<p>Donde <span class="math notranslate nohighlight">\(\epsilon_t\)</span> representa los residuales en el tiempo
+<span class="math notranslate nohighlight">\(t\)</span>. Si los residuales no cumplen estas propiedades, el modelo
+puede no ser adecuado para capturar la dinámica de la serie temporal.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">shapiro</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.figure_factory</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ff</span>
+
+<span class="c1"># Graficar la distribución de los residuales</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">create_distplot</span><span class="p">([</span><span class="n">residuals</span><span class="p">],</span> <span class="n">group_labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Residuales&quot;</span><span class="p">],</span> <span class="n">show_hist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_rug</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Distribución de los Residuales&quot;</span><span class="p">,</span> <span class="n">xaxis_title</span><span class="o">=</span><span class="s2">&quot;Residuales&quot;</span><span class="p">,</span> <span class="n">yaxis_title</span><span class="o">=</span><span class="s2">&quot;Densidad&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Realizar la prueba de Shapiro-Wilk</span>
+<span class="n">stat</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">shapiro</span><span class="p">(</span><span class="n">residuals</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Estadístico de Shapiro-Wilk: </span><span class="si">{</span><span class="n">stat</span><span class="si">}</span><span class="s2">, p-valor: </span><span class="si">{</span><span class="n">p_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">p_value</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No se puede rechazar la hipótesis nula: los residuales parecen seguir una distribución normal.&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Se rechaza la hipótesis nula: los residuales no siguen una distribución normal.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/residuales_arma.png" src="../_images/residuales_arma.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Estadístico</span> <span class="n">de</span> <span class="n">Shapiro</span><span class="o">-</span><span class="n">Wilk</span><span class="p">:</span> <span class="mf">0.9895207146801304</span><span class="p">,</span> <span class="n">p</span><span class="o">-</span><span class="n">valor</span><span class="p">:</span> <span class="mf">0.0021362316746592067</span>
+<span class="n">Se</span> <span class="n">rechaza</span> <span class="n">la</span> <span class="n">hipótesis</span> <span class="n">nula</span><span class="p">:</span> <span class="n">los</span> <span class="n">residuales</span> <span class="n">no</span> <span class="n">siguen</span> <span class="n">una</span> <span class="n">distribución</span> <span class="n">normal</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>El histograma de los residuales no muestra un comportamiento parecido a
+yna campana gausiana</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extraer los residuales del modelo ARMA(1,1)</span>
+<span class="n">residuals_arma</span> <span class="o">=</span> <span class="n">model_arma11</span><span class="o">.</span><span class="n">resid</span>
+
+<span class="c1"># Realizar la prueba de Ljung-Box sobre los residuales del modelo ARMA</span>
+<span class="n">ljung_box_arma_result</span> <span class="o">=</span> <span class="n">acorr_ljungbox</span><span class="p">(</span><span class="n">residuals_arma</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Mostrar los resultados</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ljung_box_arma_result</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>       <span class="n">lb_stat</span>     <span class="n">lb_pvalue</span>
+<span class="mi">10</span>  <span class="mf">166.255102</span>  <span class="mf">1.652262e-30</span>
+</pre></div>
+</div>
+<p>Al igual que en el anterior, los residuales del modelo ARMA(1,1),
+todavia presentan autocorrelaciones.</p>
+</section>
+<section id="componente-estacional">
+<h2><span class="section-number">2.3. </span>Componente Estacional<a class="headerlink" href="#componente-estacional" title="Link to this heading">#</a></h2>
+<p>Utilizamos el modelo SARIMA para capturar la estacionalidad en los datos.</p>
+</section>
+<section id="detalle-matematico-del-modelo-sarima">
+<h2><span class="section-number">2.4. </span>Detalle Matemático del Modelo SARIMA<a class="headerlink" href="#detalle-matematico-del-modelo-sarima" title="Link to this heading">#</a></h2>
+<p>El modelo SARIMA (Seasonal AutoRegressive Integrated Moving Average) es
+una extensión del modelo ARIMA que incluye componentes estacionales. El
+código:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model_sarima</span> <span class="o">=</span> <span class="n">SARIMAX</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">seasonal_order</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>configura y ajusta un modelo SARIMA con los siguientes parámetros:</p>
+<ol class="arabic">
+<li><p><strong>``order=(1, 1, 1)``</strong>:</p>
+<ul>
+<li><p><strong>AR(1)</strong>: Componente autorregresiva de orden 1, donde el valor
+actual depende linealmente de su valor pasado.</p>
+<div class="math notranslate nohighlight">
+\[X_t = \phi_1 X_{t-1} + \epsilon_t\]</div>
+</li>
+<li><p><strong>I(1)</strong>: Componente de integración de orden 1, que diferencia la
+serie una vez para hacerla estacionaria.</p>
+<div class="math notranslate nohighlight">
+\[Y_t = X_t - X_{t-1}\]</div>
+</li>
+<li><p><strong>MA(1)</strong>: Componente de media móvil de orden 1, que modela la
+relación entre el valor actual y los errores pasados.</p>
+<div class="math notranslate nohighlight">
+\[X_t = \theta_1 \epsilon_{t-1} + \epsilon_t\]</div>
+</li>
+</ul>
+</li>
+<li><p><strong>``seasonal_order=(1, 1, 1, 12)``</strong>:</p>
+<ul>
+<li><p><strong>AR estacional (1)</strong>: Componente autorregresiva estacional de
+orden 1, que considera la dependencia entre valores separados por
+un período estacional (12 meses en este caso).</p>
+<div class="math notranslate nohighlight">
+\[X_t = \Phi_1 X_{t-12} + \epsilon_t\]</div>
+</li>
+<li><p><strong>Diferenciación estacional (1)</strong>: Diferenciación de la serie con
+un rezago estacional para eliminar tendencias estacionales.</p>
+<div class="math notranslate nohighlight">
+\[Y_t = X_t - X_{t-12}\]</div>
+</li>
+<li><p><strong>MA estacional (1)</strong>: Componente de media móvil estacional de
+orden 1, que modela la relación entre el valor actual y los errores
+pasados separados por un período estacional.</p>
+<div class="math notranslate nohighlight">
+\[X_t = \Theta_1 \epsilon_{t-12} + \epsilon_t\]</div>
+</li>
+<li><p><strong>Período estacional (12)</strong>: Indica que la estacionalidad tiene un
+ciclo de 12 meses.</p></li>
+</ul>
+</li>
+</ol>
+<p>En conjunto, el modelo SARIMA combina estas componentes para capturar
+tanto las dinámicas temporales como las estacionales de la serie. Este
+enfoque es útil para series temporales con patrones estacionales claros,
+como las mediciones mensuales de CO₂ en Mauna Loa.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># El modelo SARIMA realiza la diferenciación automáticamente para hacer la serie estacionaria por lo que usaremos la serie original</span>
+
+<span class="n">H</span> <span class="o">=</span> <span class="mi">60</span>
+<span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="o">-</span><span class="n">H</span><span class="p">],</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="n">H</span><span class="p">:]</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tsa.statespace.sarimax</span><span class="w"> </span><span class="kn">import</span> <span class="n">SARIMAX</span>
+
+<span class="c1"># Ajustar el modelo SARIMA</span>
+<span class="n">sarima_model</span> <span class="o">=</span> <span class="n">SARIMAX</span><span class="p">(</span>
+   <span class="n">y</span><span class="p">,</span>
+    <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>             <span class="c1"># parte no estacional</span>
+    <span class="n">seasonal_order</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span><span class="c1"># parte estacional</span>
+    <span class="n">enforce_stationarity</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">enforce_invertibility</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="c1"># Mostrar el resumen del modelo</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sarima_model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                                     <span class="n">SARIMAX</span> <span class="n">Results</span>
+<span class="o">==========================================================================================</span>
+<span class="n">Dep</span><span class="o">.</span> <span class="n">Variable</span><span class="p">:</span>                                <span class="n">co2</span>   <span class="n">No</span><span class="o">.</span> <span class="n">Observations</span><span class="p">:</span>                  <span class="mi">526</span>
+<span class="n">Model</span><span class="p">:</span>             <span class="n">SARIMAX</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="n">x</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>   <span class="n">Log</span> <span class="n">Likelihood</span>                <span class="o">-</span><span class="mf">102.151</span>
+<span class="n">Date</span><span class="p">:</span>                            <span class="n">Tue</span><span class="p">,</span> <span class="mi">14</span> <span class="n">Oct</span> <span class="mi">2025</span>   <span class="n">AIC</span>                            <span class="mf">214.302</span>
+<span class="n">Time</span><span class="p">:</span>                                    <span class="mi">12</span><span class="p">:</span><span class="mi">59</span><span class="p">:</span><span class="mi">38</span>   <span class="n">BIC</span>                            <span class="mf">235.365</span>
+<span class="n">Sample</span><span class="p">:</span>                                <span class="mi">03</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">1958</span>   <span class="n">HQIC</span>                           <span class="mf">222.568</span>
+                                     <span class="o">-</span> <span class="mi">12</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">2001</span>
+<span class="n">Covariance</span> <span class="n">Type</span><span class="p">:</span>                              <span class="n">opg</span>
+<span class="o">==============================================================================</span>
+                 <span class="n">coef</span>    <span class="n">std</span> <span class="n">err</span>          <span class="n">z</span>      <span class="n">P</span><span class="o">&gt;|</span><span class="n">z</span><span class="o">|</span>      <span class="p">[</span><span class="mf">0.025</span>      <span class="mf">0.975</span><span class="p">]</span>
+<span class="o">------------------------------------------------------------------------------</span>
+<span class="n">ar</span><span class="o">.</span><span class="n">L1</span>          <span class="mf">0.1575</span>      <span class="mf">0.122</span>      <span class="mf">1.296</span>      <span class="mf">0.195</span>      <span class="o">-</span><span class="mf">0.081</span>       <span class="mf">0.396</span>
+<span class="n">ma</span><span class="o">.</span><span class="n">L1</span>         <span class="o">-</span><span class="mf">0.5004</span>      <span class="mf">0.109</span>     <span class="o">-</span><span class="mf">4.583</span>      <span class="mf">0.000</span>      <span class="o">-</span><span class="mf">0.714</span>      <span class="o">-</span><span class="mf">0.286</span>
+<span class="n">ar</span><span class="o">.</span><span class="n">S</span><span class="o">.</span><span class="n">L12</span>       <span class="mf">0.0008</span>      <span class="mf">0.000</span>      <span class="mf">1.826</span>      <span class="mf">0.068</span>   <span class="o">-</span><span class="mf">6.23e-05</span>       <span class="mf">0.002</span>
+<span class="n">ma</span><span class="o">.</span><span class="n">S</span><span class="o">.</span><span class="n">L12</span>      <span class="o">-</span><span class="mf">0.8605</span>      <span class="mf">0.027</span>    <span class="o">-</span><span class="mf">32.198</span>      <span class="mf">0.000</span>      <span class="o">-</span><span class="mf">0.913</span>      <span class="o">-</span><span class="mf">0.808</span>
+<span class="n">sigma2</span>         <span class="mf">0.0858</span>      <span class="mf">0.006</span>     <span class="mf">15.485</span>      <span class="mf">0.000</span>       <span class="mf">0.075</span>       <span class="mf">0.097</span>
+<span class="o">===================================================================================</span>
+<span class="n">Ljung</span><span class="o">-</span><span class="n">Box</span> <span class="p">(</span><span class="n">L1</span><span class="p">)</span> <span class="p">(</span><span class="n">Q</span><span class="p">):</span>                   <span class="mf">0.01</span>   <span class="n">Jarque</span><span class="o">-</span><span class="n">Bera</span> <span class="p">(</span><span class="n">JB</span><span class="p">):</span>                 <span class="mf">0.07</span>
+<span class="n">Prob</span><span class="p">(</span><span class="n">Q</span><span class="p">):</span>                              <span class="mf">0.92</span>   <span class="n">Prob</span><span class="p">(</span><span class="n">JB</span><span class="p">):</span>                         <span class="mf">0.97</span>
+<span class="n">Heteroskedasticity</span> <span class="p">(</span><span class="n">H</span><span class="p">):</span>               <span class="mf">0.86</span>   <span class="n">Skew</span><span class="p">:</span>                            <span class="o">-</span><span class="mf">0.01</span>
+<span class="n">Prob</span><span class="p">(</span><span class="n">H</span><span class="p">)</span> <span class="p">(</span><span class="n">two</span><span class="o">-</span><span class="n">sided</span><span class="p">):</span>                  <span class="mf">0.32</span>   <span class="n">Kurtosis</span><span class="p">:</span>                         <span class="mf">2.94</span>
+<span class="o">===================================================================================</span>
+
+<span class="n">Warnings</span><span class="p">:</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="n">Covariance</span> <span class="n">matrix</span> <span class="n">calculated</span> <span class="n">using</span> <span class="n">the</span> <span class="n">outer</span> <span class="n">product</span> <span class="n">of</span> <span class="n">gradients</span> <span class="p">(</span><span class="nb">complex</span><span class="o">-</span><span class="n">step</span><span class="p">)</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Comprobemos residuales</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.stats.diagnostic</span><span class="w"> </span><span class="kn">import</span> <span class="n">acorr_ljungbox</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">shapiro</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.figure_factory</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ff</span>
+
+<span class="c1"># Extraer los residuales del modelo SARIMA, ignorando las primeras observaciones</span>
+<span class="n">residuals_sarima</span> <span class="o">=</span> <span class="n">sarima_model</span><span class="o">.</span><span class="n">resid</span><span class="p">[</span><span class="mi">15</span><span class="p">:]</span>  <span class="c1"># Ignorar las primeras 12 observaciones</span>
+
+<span class="c1"># Graficar los residuales</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">residuals_sarima</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">residuals_sarima</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;markers&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Residuales&#39;</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">residuals_sarima</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">residuals_sarima</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Media Cero&#39;</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Residuales del Modelo SARIMA (Ajustados)&#39;</span><span class="p">,</span> <span class="n">xaxis_title</span><span class="o">=</span><span class="s1">&#39;Fecha&#39;</span><span class="p">,</span> <span class="n">yaxis_title</span><span class="o">=</span><span class="s1">&#39;Residuales&#39;</span><span class="p">,</span> <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Realizar la prueba de Ljung-Box para verificar no autocorrelación</span>
+<span class="n">ljung_box_sarima_result</span> <span class="o">=</span> <span class="n">acorr_ljungbox</span><span class="p">(</span><span class="n">residuals_sarima</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Resultados de la prueba de Ljung-Box (Ajustados):&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ljung_box_sarima_result</span><span class="p">)</span>
+
+<span class="c1"># Graficar la distribución de los residuales</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">create_distplot</span><span class="p">([</span><span class="n">residuals_sarima</span><span class="p">],</span> <span class="n">group_labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Residuales&quot;</span><span class="p">],</span> <span class="n">show_hist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_rug</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Distribución de los Residuales del Modelo SARIMA (Ajustados)&quot;</span><span class="p">,</span> <span class="n">xaxis_title</span><span class="o">=</span><span class="s2">&quot;Residuales&quot;</span><span class="p">,</span> <span class="n">yaxis_title</span><span class="o">=</span><span class="s2">&quot;Densidad&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Realizar la prueba de Shapiro-Wilk para verificar normalidad</span>
+<span class="n">stat</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">shapiro</span><span class="p">(</span><span class="n">residuals_sarima</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Estadístico de Shapiro-Wilk: </span><span class="si">{</span><span class="n">stat</span><span class="si">}</span><span class="s2">, p-valor: </span><span class="si">{</span><span class="n">p_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">p_value</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No se puede rechazar la hipótesis nula: los residuales parecen seguir una distribución normal.&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Se rechaza la hipótesis nula: los residuales no siguen una distribución normal.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Resultados</span> <span class="n">de</span> <span class="n">la</span> <span class="n">prueba</span> <span class="n">de</span> <span class="n">Ljung</span><span class="o">-</span><span class="n">Box</span> <span class="p">(</span><span class="n">Ajustados</span><span class="p">):</span>
+     <span class="n">lb_stat</span>  <span class="n">lb_pvalue</span>
+<span class="mi">10</span>  <span class="mf">6.370597</span>   <span class="mf">0.783226</span>
+</pre></div>
+</div>
+<img alt="../_images/residuales_sarima.png" src="../_images/residuales_sarima.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Estadístico</span> <span class="n">de</span> <span class="n">Shapiro</span><span class="o">-</span><span class="n">Wilk</span><span class="p">:</span> <span class="mf">0.9935186700111294</span><span class="p">,</span> <span class="n">p</span><span class="o">-</span><span class="n">valor</span><span class="p">:</span> <span class="mf">0.027259616235327244</span>
+<span class="n">Se</span> <span class="n">rechaza</span> <span class="n">la</span> <span class="n">hipótesis</span> <span class="n">nula</span><span class="p">:</span> <span class="n">los</span> <span class="n">residuales</span> <span class="n">no</span> <span class="n">siguen</span> <span class="n">una</span> <span class="n">distribución</span> <span class="n">normal</span><span class="o">.</span>
+</pre></div>
+</div>
+<img alt="../_images/hist_resis_sarima.png" src="../_images/hist_resis_sarima.png" />
+<p>Como regla práctica: si Ljung–Box y ARCH-LM pasan pero normalidad falla,
+mantén la estructura SARIMA y corrige sólo la distribución (t-student o
+bootstrapping) para bandas de predicción y tests.</p>
+</section>
+<section id="pronostico-con-el-modelo">
+<h2><span class="section-number">2.5. </span>Pronóstico con el modelo<a class="headerlink" href="#pronostico-con-el-modelo" title="Link to this heading">#</a></h2>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Realizar el pronóstico para el conjunto de prueba</span>
+<span class="n">forecast</span> <span class="o">=</span> <span class="n">sarima_model</span><span class="o">.</span><span class="n">get_forecast</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="n">H</span><span class="p">)</span>
+<span class="n">forecast_index</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">index</span>
+<span class="n">forecast_values</span> <span class="o">=</span> <span class="n">forecast</span><span class="o">.</span><span class="n">predicted_mean</span>
+
+<span class="c1"># Graficar los valores reales y pronosticados</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+
+<span class="c1"># Agregar los valores reales del conjunto de prueba</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">test</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">test</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Valores Reales&#39;</span><span class="p">))</span>
+
+<span class="c1"># Agregar los valores pronosticados</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">forecast_index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">forecast_values</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Pronóstico&#39;</span><span class="p">))</span>
+
+<span class="c1"># Agregar las bandas de confianza</span>
+<span class="n">conf_int</span> <span class="o">=</span> <span class="n">forecast</span><span class="o">.</span><span class="n">conf_int</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="n">forecast_index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">+</span> <span class="n">forecast_index</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+    <span class="n">y</span><span class="o">=</span><span class="n">conf_int</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">+</span> <span class="n">conf_int</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+    <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;toself&#39;</span><span class="p">,</span>
+    <span class="n">fillcolor</span><span class="o">=</span><span class="s1">&#39;rgba(0,100,80,0.2)&#39;</span><span class="p">,</span>
+    <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;rgba(255,255,255,0)&#39;</span><span class="p">),</span>
+    <span class="n">hoverinfo</span><span class="o">=</span><span class="s2">&quot;skip&quot;</span><span class="p">,</span>
+    <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Intervalo de Confianza&#39;</span>
+<span class="p">))</span>
+
+<span class="c1"># Configurar el diseño del gráfico</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Pronóstico vs Valores Reales en test&quot;</span><span class="p">,</span>
+    <span class="n">xaxis_title</span><span class="o">=</span><span class="s2">&quot;Fecha&quot;</span><span class="p">,</span>
+    <span class="n">yaxis_title</span><span class="o">=</span><span class="s2">&quot;CO2&quot;</span><span class="p">,</span>
+    <span class="n">legend</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="n">yanchor</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.02</span><span class="p">,</span> <span class="n">xanchor</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../_images/pronostico_sarima.png" src="../_images/pronostico_sarima.png" />
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_absolute_error</span><span class="p">,</span> <span class="n">mean_squared_error</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Calcular métricas</span>
+<span class="n">mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">forecast_values</span><span class="p">)</span>
+<span class="n">mse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">forecast_values</span><span class="p">)</span>
+<span class="n">rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse</span><span class="p">)</span>
+
+
+<span class="c1"># Mostrar resultados</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MAE (Error Absoluto Medio): </span><span class="si">{</span><span class="n">mae</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MSE (Error Cuadrático Medio): </span><span class="si">{</span><span class="n">mse</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RMSE (Raíz del Error Cuadrático Medio): </span><span class="si">{</span><span class="n">rmse</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MAE</span> <span class="p">(</span><span class="n">Error</span> <span class="n">Absoluto</span> <span class="n">Medio</span><span class="p">):</span> <span class="mf">7.979047387128087</span>
+<span class="n">MSE</span> <span class="p">(</span><span class="n">Error</span> <span class="n">Cuadrático</span> <span class="n">Medio</span><span class="p">):</span> <span class="mf">63.99656988285457</span>
+<span class="n">RMSE</span> <span class="p">(</span><span class="n">Raíz</span> <span class="k">del</span> <span class="n">Error</span> <span class="n">Cuadrático</span> <span class="n">Medio</span><span class="p">):</span> <span class="mf">7.999785614805847</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.stats.diagnostic</span><span class="w"> </span><span class="kn">import</span> <span class="n">breaks_cusumolsresid</span>
+
+<span class="c1"># Aplicar la prueba CUSUM a los residuales del modelo SARIMA</span>
+<span class="n">cusum_stat</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">critical_values</span> <span class="o">=</span> <span class="n">breaks_cusumolsresid</span><span class="p">(</span><span class="n">residuals_sarima</span><span class="p">)</span>
+
+<span class="c1"># Mostrar los resultados de la prueba</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Estadístico CUSUM: </span><span class="si">{</span><span class="n">cusum_stat</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P-valor: </span><span class="si">{</span><span class="n">p_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Valores críticos: </span><span class="si">{</span><span class="n">critical_values</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Graficar los resultados de la prueba CUSUM</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+
+<span class="c1"># Agregar los residuales</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">residuals_sarima</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">residuals_sarima</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Residuales&#39;</span><span class="p">))</span>
+
+<span class="c1"># Agregar las líneas de los valores críticos</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">residuals_sarima</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">critical_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">residuals_sarima</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Límite Inferior&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">dash</span><span class="o">=</span><span class="s1">&#39;dash&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">residuals_sarima</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">critical_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">residuals_sarima</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Límite Superior&#39;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">dash</span><span class="o">=</span><span class="s1">&#39;dash&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)))</span>
+
+<span class="c1"># Agregar el sombreado entre los valores críticos</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="n">residuals_sarima</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">+</span> <span class="n">residuals_sarima</span><span class="o">.</span><span class="n">index</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+    <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">critical_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">residuals_sarima</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">critical_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">residuals_sarima</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+    <span class="n">fill</span><span class="o">=</span><span class="s1">&#39;toself&#39;</span><span class="p">,</span>
+    <span class="n">fillcolor</span><span class="o">=</span><span class="s1">&#39;rgba(255,0,0,0.2)&#39;</span><span class="p">,</span>
+    <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;rgba(255,255,255,0)&#39;</span><span class="p">),</span>
+    <span class="n">hoverinfo</span><span class="o">=</span><span class="s2">&quot;skip&quot;</span><span class="p">,</span>
+    <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">))</span>
+
+<span class="c1"># Configurar el diseño del gráfico con ajuste de escala</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Prueba CUSUM para Análisis de Estabilidad del Modelo&quot;</span><span class="p">,</span>
+    <span class="n">xaxis_title</span><span class="o">=</span><span class="s2">&quot;Fecha&quot;</span><span class="p">,</span>
+    <span class="n">yaxis_title</span><span class="o">=</span><span class="s2">&quot;Residuales&quot;</span><span class="p">,</span>
+    <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">residuals_sarima</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">critical_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">residuals_sarima</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">critical_values</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]),</span>
+    <span class="n">showlegend</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Estadístico</span> <span class="n">CUSUM</span><span class="p">:</span> <span class="mf">1.5037532831227998</span>
+<span class="n">P</span><span class="o">-</span><span class="n">valor</span><span class="p">:</span> <span class="mf">0.021722602433024974</span>
+<span class="n">Valores</span> <span class="n">críticos</span><span class="p">:</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.63</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">1.36</span><span class="p">),</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">1.22</span><span class="p">)]</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> En esta página
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-de-residuales">2.1. Análisis de Residuales</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#isertemos-el-componente-ma-arma-1-1">2.1.1. Isertemos el componente MA (ARMA (1,1))</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comportamiento-de-los-residuales">2.2. Comportamiento de los Residuales</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#componente-estacional">2.3. Componente Estacional</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detalle-matematico-del-modelo-sarima">2.4. Detalle Matemático del Modelo SARIMA</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pronostico-con-el-modelo">2.5. Pronóstico con el modelo</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/Nataliaprins/SeriesTemporalesDeepLearning/edit/main/docs/source/sesiones/2_modelos_tradicionales.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Editar en GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>Esta página</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/sesiones/2_modelos_tradicionales.rst.txt"
+            rel="nofollow">Mostrar el código</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Natalia Acevedo Prins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Construido con el <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html"> Tema PyData Sphinx </a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
