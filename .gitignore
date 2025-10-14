@@ -101,6 +101,7 @@ venv/
 
 #sphinx documentation
 docs/source
+notebooks/
 
 # mypy
 .mypy_cache/
