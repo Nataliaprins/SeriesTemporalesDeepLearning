@@ -10,6 +10,10 @@ y deep learning.
    
    1_introduccion_series_tiempo
    2_modelos_tradicionales
+   3_MLP
+   4_mlp_model
+
+
 
 
 
