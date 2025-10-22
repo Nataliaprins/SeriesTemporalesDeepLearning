@@ -1,6 +1,10 @@
 MLP para series de tiempo
 ================================
 
+Trabajaremos con un conjunto de datos de clima global para predecir la
+temperatura promedio diaria en Nueva York utilizando un modelo de Perceptrón
+Multicapa (MLP). descarga el dataset desde `aquí <global_weather_data_2015_2024.csv>`_.
+
 .. code:: ipython3
 
     import pandas as pd
