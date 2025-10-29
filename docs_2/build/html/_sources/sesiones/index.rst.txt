@@ -12,6 +12,8 @@ y deep learning.
    2_modelos_tradicionales
    3_MLP
    4_mlp_model
+   5_deeplearning
+
 
 
 

@@ -1,0 +1,761 @@
+Estructuras de redes profundas para series de tiempo univariadas
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Para este ejercicio, utilizaremos datos históricos de precios de Ethereum (ETH) desde su lanzamiento en 2015 hasta 2025. descargue los datos aquí: `eth-usd-max.csv <eth-usd-max.csv>`_.
+
+.. code:: ipython3
+
+    # Read the data
+    import pandas as pd
+    
+    data= pd.read_csv("/Users/nataliaacevedo/SeriesTemporalesDeepLearning/notebooks/modelo DL/eth-usd-max.csv", index_col=0)
+    # Dar formato de fecha a el índice
+    data.index= pd.to_datetime(data.index)
+    price= data["price"]
+    price.info()
+    price.head()
+
+
+
+.. parsed-literal::
+
+    <class 'pandas.core.series.Series'>
+    DatetimeIndex: 3647 entries, 2015-08-07 00:00:00+00:00 to 2025-08-01 00:00:00+00:00
+    Series name: price
+    Non-Null Count  Dtype  
+    --------------  -----  
+    3647 non-null   float64
+    dtypes: float64(1)
+    memory usage: 57.0 KB
+
+
+
+
+.. parsed-literal::
+
+    snapped_at
+    2015-08-07 00:00:00+00:00    2.831620
+    2015-08-08 00:00:00+00:00    1.330750
+    2015-08-10 00:00:00+00:00    0.687586
+    2015-08-11 00:00:00+00:00    1.067379
+    2015-08-12 00:00:00+00:00    1.256613
+    Name: price, dtype: float64
+
+
+
+Análisis de la serie
+^^^^^^^^^^^^^^^^^^^^
+
+.. code:: ipython3
+
+    # Rendimiento logarítmico del ETH
+    import numpy as np
+    log_returns = np.log(price / price.shift(1)).dropna()
+    log_returns.describe()
+
+
+
+
+
+.. parsed-literal::
+
+    count    3646.000000
+    mean        0.001968
+    std         0.055915
+    min        -0.755106
+    25%        -0.020145
+    50%         0.000756
+    75%         0.024395
+    max         0.439775
+    Name: price, dtype: float64
+
+
+
+.. code:: ipython3
+
+    import plotly.express as px
+    
+    fig = px.line(log_returns, title="Rendimientos Logarítmicos del ETH", labels={"index": "Fecha", "value": "Rendimientos Logarítmicos"})
+    fig.update_layout(
+        xaxis_title="Fecha",
+        yaxis_title="Rendimientos Logarítmicos",
+        xaxis=dict(tickformat="%Y")  # Formato para mostrar solo los años
+    )
+    fig.show()
+
+
+
+
+.. code:: ipython3
+
+    from statsmodels.graphics.tsaplots import plot_acf
+    
+    import matplotlib.pyplot as plt
+    
+    plot_acf(log_returns, lags=50, title="ACF de los Rendimientos Logarítmicos del ETH")
+    plt.show()
+
+
+
+.. image:: deeplearning_files/deeplearning_5_0.png
+
+
+.. code:: ipython3
+
+    from statsmodels.graphics.tsaplots import plot_pacf
+    
+    plot_pacf(log_returns, lags=50, title="PACF de los Rendimientos Logarítmicos del ETH")
+    plt.show()
+
+
+
+.. image:: deeplearning_files/deeplearning_6_0.png
+
+
+No hay evidencia estadísticamente significativa de autocorrelación en
+los rendimientos del ETH.
+
+Los rendimientos parecen ser independientes en el tiempo (al menos
+linealmente), lo cual es típico de series financieras bien especificadas
+(retornos ≈ ruido blanco).
+
+Esto no implica que la varianza sea constante; puede existir
+heteroscedasticidad (volatilidad variable)
+
+.. code:: ipython3
+
+    from statsmodels.stats.diagnostic import acorr_ljungbox
+    
+    #prueba de raices unitarias ADF
+    from statsmodels.tsa.stattools import adfuller
+    adf_result = adfuller(log_returns)
+    print("ADF Statistic:", adf_result[0])
+    print("p-value:", adf_result[1])
+    
+    
+    # Prueba de Ljung-Box
+    ljung_box_test = acorr_ljungbox(log_returns, lags=[10], return_df=True)
+    print(ljung_box_test)
+
+
+.. parsed-literal::
+
+    ADF Statistic: -11.4460084631789
+    p-value: 6.016416114763928e-21
+          lb_stat  lb_pvalue
+    10  12.902362   0.229182
+
+
+La prueba ADF muestra evidencia muy fuerte de estacionariedad en los
+rendimientos del ETH. Es decir, no hay raíz unitaria, la serie no tiene
+tendencia sistemática, y sus fluctuaciones son estables alrededor de una
+media constante (ruido blanco con posible heteroscedasticidad).
+
+.. code:: ipython3
+
+    #Prueba ARCH para heteroscedasticidad
+    from statsmodels.stats.diagnostic import het_arch
+    arch_test = het_arch(log_returns)
+    print("ARCH Test Statistic:", arch_test[0])
+    print("p-value:", arch_test[1])
+
+
+.. parsed-literal::
+
+    ARCH Test Statistic: 242.72418427640844
+    p-value: 1.835123604303998e-46
+
+
+Las series financieras, energéticas, macroeconómicas, climáticas y de
+demanda son las que más frecuentemente presentan varianza no constante.
+
+Una serie no presenta varianza constante cuando la magnitud de sus
+fluctuaciones cambia con el tiempo, mostrando períodos de alta y baja
+volatilidad (lo que en finanzas llamamos volatility clustering).
+
+Gráficamente, la amplitud de los valores se “estrecha” o se “ensancha”
+en distintos tramos de la serie.
+
+Series típicamente no homocedásticas (varianza no constante)
+
++---------------------+------------------------+-----------------------------+
+| Tipo de serie       | Ejemplo                | Por qué no tienen varianza  |
+|                     |                        | constante                   |
++=====================+========================+=============================+
+| **Financieras       | Retornos de acciones,  | Exhiben **clustering de     |
+| (retornos, precios, | criptomonedas, tasas   | volatilidad**: periodos de  |
+| tasas)**            | de cambio, commodities | calma seguidos de           |
+|                     |                        | turbulencia                 |
++---------------------+------------------------+-----------------------------+
+| **Energéticas**     | Precios del petróleo,  | Alta sensibilidad a choques |
+|                     | gas, electricidad      | externos y estacionalidad   |
+|                     |                        | en la volatilidad           |
++---------------------+------------------------+-----------------------------+
+| **Macroeconómicas** | Inflación, PIB,        | Cambios estructurales,      |
+|                     | desempleo, tasas de    | shocks de política          |
+|                     | interés                | económica o crisis          |
++---------------------+------------------------+-----------------------------+
+| **Meteorológicas /  | Temperatura,           | Fenómenos extremos o        |
+| Climáticas**        | precipitación,         | estacionales que modifican  |
+|                     | velocidad del viento   | la amplitud                 |
++---------------------+------------------------+-----------------------------+
+| **Demanda / Consumo | Demanda eléctrica,     | Varianza mayor en horas     |
+| energético**        | tráfico de red,        | pico o temporadas altas     |
+|                     | transporte             |                             |
++---------------------+------------------------+-----------------------------+
+| **Series biomédicas | Frecuencia cardíaca,   | Responden a estímulos o     |
+| / fisiológicas**    | señales EEG, presión   | eventos fisiológicos con    |
+|                     | arterial               | varianza variable           |
++---------------------+------------------------+-----------------------------+
+| **Series económicas | Volumen de comercio,   | Aumentan su varianza con el |
+| agregadas**         | producción industrial  | tamaño o la escala del      |
+|                     |                        | sistema                     |
++---------------------+------------------------+-----------------------------+
+
+Ajustar un modelo LSTM
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: ipython3
+
+    # Dividir los datos en conjuntos de entrenamiento y prueba
+    train_size = int(len(log_returns) * 0.8)
+    train, test = log_returns[:train_size], log_returns[train_size:]
+    print(f"Train size: {len(train)}, Test size: {len(test)}")
+
+
+.. parsed-literal::
+
+    Train size: 2916, Test size: 730
+
+
+.. code:: ipython3
+
+    # extraer las secuencias para los rendimientos logarítmicos para train y test
+    def create_sequences(data, seq_length):
+        sequences = []
+        targets = []
+        for i in range(len(data) - seq_length):
+            sequences.append(data[i:i + seq_length])
+            targets.append(data[i + seq_length])
+        return np.array(sequences), np.array(targets)
+    
+    seq_length = 20  # Número de días anteriores para predecir el siguiente día
+    
+    X_train, y_train = create_sequences(train.values, seq_length)
+    X_test, y_test = create_sequences(test.values, seq_length)
+    print("Shape of X_train:", X_train.shape)
+    print("Shape of y_train:", y_train.shape)
+    print("Shape of X_test:", X_test.shape)
+    print("Shape of y_test:", y_test.shape)
+
+
+
+.. parsed-literal::
+
+    Shape of X_train: (2896, 20)
+    Shape of y_train: (2896,)
+    Shape of X_test: (710, 20)
+    Shape of y_test: (710,)
+
+
+.. code:: ipython3
+
+    from sklearn.preprocessing import MinMaxScaler
+    
+    # Escalar las secuencias con MinMaxScaler para train y test
+    
+    scaler_X = MinMaxScaler(feature_range=(-1, 1))
+    scaler_y = MinMaxScaler(feature_range=(-1, 1))
+    
+    # Solo se ajusta con el TRAIN
+    X_train_scaled = scaler_X.fit_transform(X_train.reshape(-1, X_train.shape[-1])).reshape(X_train.shape)
+    y_train_scaled = scaler_y.fit_transform(y_train.reshape(-1, 1)).flatten()
+    
+    # El TEST solo se transforma con los límites del TRAIN
+    X_test_scaled = scaler_X.transform(X_test.reshape(-1, X_test.shape[-1])).reshape(X_test.shape)
+    y_test_scaled = scaler_y.transform(y_test.reshape(-1, 1)).flatten()
+    
+    print("Scaled X_train shape:", X_train_scaled.shape)
+    print("Scaled y_train shape:", y_train_scaled.shape)
+    print("Scaled X_test shape:", X_test_scaled.shape)
+    print("Scaled y_test shape:", y_test_scaled.shape)
+
+
+.. parsed-literal::
+
+    Scaled X_train shape: (2896, 20)
+    Scaled y_train shape: (2896,)
+    Scaled X_test shape: (710, 20)
+    Scaled y_test shape: (710,)
+
+
+.. code:: ipython3
+
+    from tensorflow.keras.models import Sequential
+    from tensorflow.keras.layers import LSTM, Dense, Input
+    
+    # Asegurarse de que X tenga tres dimensiones
+    X = X_train_scaled.reshape((X_train_scaled.shape[0], X_train_scaled.shape[1], 1))
+    print("Reshaped X shape:", X.shape)
+    
+    # Crear el modelo LSTM
+    model = Sequential([
+        Input(shape=(X.shape[1], X.shape[2])),  # Define explícitamente la forma de entrada
+        LSTM(64, activation='tanh', return_sequences=True),
+        LSTM(32, activation='tanh'),
+        Dense(1)  # Capa de salida con una neurona para la predicción
+    ])
+    
+    # Compilar el modelo
+    model.compile(optimizer='adam', loss='mean_squared_error')
+    
+    # Resumen del modelo
+    model.summary()
+
+
+.. parsed-literal::
+
+    Reshaped X shape: (2896, 20, 1)
+
+
+
+.. raw:: html
+
+    <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "sequential"</span>
+    </pre>
+
+
+
+
+.. raw:: html
+
+    <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+    ┃<span style="font-weight: bold"> Layer (type)                    </span>┃<span style="font-weight: bold"> Output Shape           </span>┃<span style="font-weight: bold">       Param # </span>┃
+    ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+    │ lstm (<span style="color: #0087ff; text-decoration-color: #0087ff">LSTM</span>)                     │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">20</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)         │        <span style="color: #00af00; text-decoration-color: #00af00">16,896</span> │
+    ├─────────────────────────────────┼────────────────────────┼───────────────┤
+    │ lstm_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">LSTM</span>)                   │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)             │        <span style="color: #00af00; text-decoration-color: #00af00">12,416</span> │
+    ├─────────────────────────────────┼────────────────────────┼───────────────┤
+    │ dense (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                   │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">1</span>)              │            <span style="color: #00af00; text-decoration-color: #00af00">33</span> │
+    └─────────────────────────────────┴────────────────────────┴───────────────┘
+    </pre>
+
+
+
+
+.. raw:: html
+
+    <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Total params: </span><span style="color: #00af00; text-decoration-color: #00af00">29,345</span> (114.63 KB)
+    </pre>
+
+
+
+
+.. raw:: html
+
+    <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">29,345</span> (114.63 KB)
+    </pre>
+
+
+
+
+.. raw:: html
+
+    <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
+    </pre>
+
+
+
+.. code:: ipython3
+
+    #fijar el valor semilla 
+    import tensorflow as tf
+    tf.random.set_seed(42)
+    
+    # entrenar el modelo
+    history = model.fit(X_train_scaled, y_train_scaled, epochs=200, batch_size=32, validation_split=0.2, verbose=0)
+    # graficar la pérdida de entrenamiento y validación con plotly
+    import plotly.graph_objects as go   
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(y=history.history['loss'], mode='lines', name='Pérdida de Entrenamiento'))
+    fig.add_trace(go.Scatter(y=history.history['val_loss'], mode='lines', name='Pérdida de Validación'))
+    fig.update_layout(
+        title="Pérdida de Entrenamiento y Validación",
+        xaxis_title="Épocas",
+        yaxis_title="Pérdida (MSE)"
+    )
+    fig.show()  
+
+.. image:: deeplearning_files/deeplearning_7_0.png
+
+
+
++----------------+------------------------------------------------------+
+| Evidencia      | Interpretación                                       |
++================+======================================================+
+| ``train_loss`` | El modelo sigue ajustando cada vez mejor los datos   |
+| ↓ constante    | de entrenamiento.                                    |
++----------------+------------------------------------------------------+
+| ``val_loss`` ↓ | El modelo comienza a memorizar detalles del conjunto |
+| al inicio y    | de entrenamiento y pierde capacidad de               |
+| luego ↑        | generalización.                                      |
++----------------+------------------------------------------------------+
+| Punto de       | A partir de allí, el modelo deja de generalizar;     |
+| inflexión      | debería haberse detenido antes.                      |
+| (~época 150)   |                                                      |
++----------------+------------------------------------------------------+
+
+EL modelo aprende correctamente (no hay underfitting ni gradientes
+muertos).
+
+La arquitectura tiene suficiente capacidad.
+
+El modelo necesita un mecanismo de regularización o parada temprana para
+evitar memorizar el ruido final.
+
+.. code:: ipython3
+
+    # predecir con el modelo entrenado
+    y_pred_scaled = model.predict(X_train_scaled)
+    y_pred = scaler_y.inverse_transform(y_pred_scaled.reshape(-1, 1)).flatten()
+    
+    # graficar las predicciones vs los valores reales
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(y=y_train, mode='lines', name='Valores Reales'))
+    fig.add_trace(go.Scatter(y=y_pred, mode='lines', name='Predicciones del Modelo'))
+    fig.update_layout(
+        title="Predicciones vs Valores Reales",
+        xaxis_title="Días",
+        yaxis_title="Rendimientos Logarítmicos"
+    )
+    fig.show()
+
+.. image:: deeplearning_files/deeplearning_8_0.png
+
+
+.. parsed-literal::
+
+    [1m91/91[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 4ms/step
+
+
+
+
+Esto es el patrón clásico de sobreajuste leve (overfitting):
+
+Evidencia Interpretación train_loss ↓ constante El modelo sigue
+ajustando cada vez mejor los datos de entrenamiento. val_loss ↓ al
+inicio y luego ↑ El modelo comienza a memorizar detalles del conjunto de
+entrenamiento y pierde capacidad de generalización. Punto de inflexión
+(~época 150) A partir de allí, el modelo deja de generalizar; debería
+haberse detenido antes.
+
+¿Por qué regularizar una LSTM?
+
+Las LSTM tienen muchos parámetros (por las 4 puertas internas), por lo
+que pueden:
+
+- Memorizar ruido.
+- Aprender relaciones espurias.
+- O no generalizar a datos futuros (especialmente en backtesting
+  temporal).
+
+Regularizar ayuda a: \* Controlar la complejidad. \* Reducir la
+varianza. \* Y mejorar la capacidad de generalización a nuevos periodos.
+
++-----------------------+---------------------------+-------------+-------------------+
+| Tipo                  | Cuándo                    | Valor       | Observación       |
+|                       |                           | típico      |                   |
++=======================+===========================+=============+===================+
+| ``L2``                | Siempre útil, sobre todo  | 1e-4 – 1e-3 | Penaliza pesos    |
+|                       | con pocos datos           |             | grandes           |
++-----------------------+---------------------------+-------------+-------------------+
+| ``dropout``           | Contra sobreajuste en     | 0.2–0.4     | Muy efectivo      |
+|                       | entradas                  |             |                   |
++-----------------------+---------------------------+-------------+-------------------+
+| ``recurrent_dropout`` | Contra dependencias       | 0.1–0.2     | Cuidado con       |
+|                       | falsas                    |             | secuencias cortas |
++-----------------------+---------------------------+-------------+-------------------+
+| ``EarlyStopping``     | Siempre                   | patience=10 | Mejora            |
+|                       |                           | o 20        | generalización    |
++-----------------------+---------------------------+-------------+-------------------+
+| ``clipnorm``          | En secuencias largas      | 1–5         | Evita             |
+|                       |                           |             | inestabilidad     |
++-----------------------+---------------------------+-------------+-------------------+
+
+Ajustar un LSTM con Early Stopping
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: ipython3
+
+    from tensorflow.keras.layers import Dropout 
+    from tensorflow.keras.optimizers import Adam
+    
+    X = X.reshape((X.shape[0], X.shape[1], 1))
+    # Crear el modelo LSTM
+    model_reg = Sequential([
+        Input(shape=(X.shape[1], X.shape[2])),  # Define explícitamente la forma de entrada
+        LSTM(64, activation='tanh', return_sequences=True),
+        LSTM(32, activation='tanh', return_sequences=False),
+        Dense(1, activation='linear')
+    ])
+    
+    
+    optimizer = Adam(learning_rate=1e-3)
+    # Compilar el modelo
+    model_reg.compile(optimizer=optimizer, loss='mean_squared_error')
+    
+    
+    
+
+
+.. code:: ipython3
+
+    from tensorflow.keras.callbacks import EarlyStopping
+    import tensorflow as tf
+    
+    early_stopping = EarlyStopping(monitor='val_loss', patience=50, restore_best_weights=True)
+    #fijar el valor semilla 
+    tf.random.set_seed(42)
+    
+    # entrenar el modelo
+    history_reg = model_reg.fit(X_train_scaled, y_train_scaled, epochs=200, batch_size=32, validation_split=0.2, verbose=0, callbacks=[early_stopping])
+    # graficar la pérdida de entrenamiento y validación con plotly
+    import plotly.graph_objects as go   
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(y=history_reg.history['loss'], mode='lines', name='Pérdida de Entrenamiento'))
+    fig.add_trace(go.Scatter(y=history_reg.history['val_loss'], mode='lines', name='Pérdida de Validación'))
+    fig.update_layout(
+        title="Pérdida de Entrenamiento y Validación",
+        xaxis_title="Épocas",
+        yaxis_title="Pérdida (MSE)"
+    )
+    fig.show()  
+
+
+.. image:: deeplearning_files/deeplearning_9_0.png
+
+
+
+.. code:: ipython3
+
+    # Realizar predicciones con el conjunto de test
+    y_test_pred_scaled = model.predict(X_test_scaled)
+    y_test_pred_m1 = scaler_y.inverse_transform(y_test_pred_scaled.reshape(-1, 1)).flatten()
+    
+    # Graficar las predicciones vs los valores reales del conjunto de test
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(y=y_test, mode='lines', name='Valores Reales (Test)'))
+    fig.add_trace(go.Scatter(y=y_test_pred_m1, mode='lines', name='Predicciones del Modelo (Test)'))
+    fig.update_layout(
+        title="Predicciones M1 vs Valores Reales (Conjunto de Test)",
+        xaxis_title="Días",
+        yaxis_title="Rendimientos Logarítmicos"
+    )
+    fig.show()
+
+
+.. image:: deeplearning_files/deeplearning_10_0.png
+
+
+.. parsed-literal::
+
+    [1m23/23[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 5ms/step
+
+
+
+
+.. code:: ipython3
+
+    #Comprobar métricas en conjunto de test
+    from sklearn.metrics import mean_squared_error, mean_absolute_error
+    
+    mse = mean_squared_error(y_test_pred_m1, y_test)
+    mae = mean_absolute_error(y_test_pred_m1, y_test)
+    print("Mean Squared Error (MSE)-M1:", mse)
+    print("Mean Absolute Error (MAE)-M1:", mae)
+
+
+.. parsed-literal::
+
+    Mean Squared Error (MSE)-M1: 0.0012814059785279802
+    Mean Absolute Error (MAE)-M1: 0.025549416435279443
+
+
+.. code:: ipython3
+
+    # Realizar predicciones con el conjunto de test con modelo Regularizado
+    y_test_pred_scaled = model_reg.predict(X_test_scaled)
+    y_test_pred_m2 = scaler_y.inverse_transform(y_test_pred_scaled.reshape(-1, 1)).flatten()
+    
+    # Graficar las predicciones vs los valores reales del conjunto de test
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(y=y_test, mode='lines', name='Valores Reales (Test)'))
+    fig.add_trace(go.Scatter(y=y_test_pred_m2, mode='lines', name='Predicciones del Modelo (Test)'))
+    fig.update_layout(
+        title="Predicciones M2 vs Valores Reales (Conjunto de Test)",
+        xaxis_title="Días",
+        yaxis_title="Rendimientos Logarítmicos"
+    )
+    fig.show()
+
+.. image:: deeplearning_files/deeplearning_11_0.png
+
+.. parsed-literal::
+
+    [1m23/23[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 3ms/step
+
+
+
+
+.. code:: ipython3
+
+    #Comprobar métricas en conjunto de test
+    from sklearn.metrics import mean_squared_error, mean_absolute_error
+    
+    mse = mean_squared_error(y_test_pred_m2, y_test)
+    mae = mean_absolute_error(y_test_pred_m2, y_test)
+    print("Mean Squared Error (MSE)-M2:", mse)
+    print("Mean Absolute Error (MAE)-M2:", mae)
+
+
+.. parsed-literal::
+
+    Mean Squared Error (MSE)-M2: 0.0011946981891149161
+    Mean Absolute Error (MAE)-M2: 0.024036314007303047
+
+
+Comparar con un modelo clásico GARCH
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: ipython3
+
+    from arch import arch_model
+    
+    # Ajustar un modelo GARCH(1,1) a los rendimientos logarítmicos
+    garch_model = arch_model(log_returns, vol='Garch', p=1, q=1, mean='Constant', dist='normal', rescale=False)
+    garch_fit = garch_model.fit(disp='off')
+    
+    # Resumen del modelo ajustado
+    print(garch_fit.summary())
+    
+
+
+
+.. parsed-literal::
+
+                         Constant Mean - GARCH Model Results                      
+    ==============================================================================
+    Dep. Variable:                  price   R-squared:                       0.000
+    Mean Model:             Constant Mean   Adj. R-squared:                  0.000
+    Vol Model:                      GARCH   Log-Likelihood:                5960.65
+    Distribution:                  Normal   AIC:                          -11913.3
+    Method:            Maximum Likelihood   BIC:                          -11888.5
+                                            No. Observations:                 3646
+    Date:                Tue, Oct 28 2025   Df Residuals:                     3645
+    Time:                        19:46:20   Df Model:                            1
+                                     Mean Model                                 
+    ============================================================================
+                     coef    std err          t      P>|t|      95.0% Conf. Int.
+    ----------------------------------------------------------------------------
+    mu         1.6880e-03  7.010e-04      2.408  1.605e-02 [3.140e-04,3.062e-03]
+                                  Volatility Model                              
+    ============================================================================
+                     coef    std err          t      P>|t|      95.0% Conf. Int.
+    ----------------------------------------------------------------------------
+    omega      1.2037e-04  4.616e-05      2.607  9.122e-03 [2.989e-05,2.108e-04]
+    alpha[1]       0.1298  3.165e-02      4.101  4.113e-05   [6.776e-02,  0.192]
+    beta[1]        0.8305  4.177e-02     19.883  5.718e-88     [  0.749,  0.912]
+    ============================================================================
+    
+    Covariance estimator: robust
+
+
+.. code:: ipython3
+
+    import matplotlib.pyplot as plt
+    
+    # Obtener las predicciones del modelo GARCH
+    garch_predictions = garch_fit.conditional_volatility
+    
+    # Graficar los valores reales y las predicciones
+    plt.figure(figsize=(12, 6))
+    plt.plot(log_returns.index, log_returns, label='Valores Reales', color='blue', alpha=0.6)
+    plt.plot(log_returns.index, garch_predictions, label='Predicciones GARCH (Volatilidad Condicional)', color='red', alpha=0.8)
+    plt.title('Comparación de Rendimientos Reales y Predicciones del Modelo GARCH')
+    plt.xlabel('Fecha')
+    plt.ylabel('Rendimientos Logarítmicos')
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+
+
+.. image:: deeplearning_files/deeplearning_32_0.png
+
+
+.. code:: ipython3
+
+    import matplotlib.pyplot as plt
+    
+    # Predicciones del conjunto de entrenamiento
+    garch_train_predictions = garch_fit.conditional_volatility
+    
+    # Predicciones del conjunto de prueba
+    garch_forecast = garch_fit.forecast(horizon=len(y_test), reindex=False)
+    garch_test_predictions = np.sqrt(garch_forecast.variance.values[-1])  # Raíz cuadrada para obtener la desviación estándar
+    
+    # Graficar los valores reales y las predicciones
+    plt.figure(figsize=(12, 6))
+    # Ensure the lengths of train.index and garch_train_predictions match
+    garch_train_predictions = garch_train_predictions[:len(train)]
+    
+    # Ensure the lengths of test.index and garch_test_predictions match
+    garch_test_predictions = garch_test_predictions[:len(y_test)]  # Align with y_test length
+    
+    plt.plot(train.index[:len(garch_train_predictions)], train[:len(garch_train_predictions)], label='Valores Reales (Entrenamiento)', color='blue', alpha=0.6)
+    plt.plot(train.index[:len(garch_train_predictions)], garch_train_predictions, label='Predicciones GARCH (Entrenamiento)', color='red', alpha=0.8)
+    plt.plot(test.index[:len(garch_test_predictions)], test[:len(garch_test_predictions)], label='Valores Reales (Test)', color='green', alpha=0.6)
+    plt.plot(test.index[:len(garch_test_predictions)], garch_test_predictions, label='Predicciones GARCH (Test)', color='orange', alpha=0.8)
+    plt.title('Comparación de Predicciones del Modelo GARCH: Entrenamiento vs Test')
+    plt.xlabel('Fecha')
+    plt.ylabel('Rendimientos Logarítmicos')
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+
+
+.. image:: deeplearning_files/deeplearning_33_0.png
+
+
+.. code:: ipython3
+
+    # Calcular el MSE y MAE para el modelo GARCH en el conjunto de test
+    mse_garch = mean_squared_error(y_test, garch_test_predictions)
+    mae_garch = mean_absolute_error(y_test, garch_test_predictions)
+    
+    print("Mean Squared Error (MSE) - GARCH:", mse_garch)
+    print("Mean Absolute Error (MAE) - GARCH:", mae_garch)
+
+
+.. parsed-literal::
+
+    Mean Squared Error (MSE) - GARCH: 0.004017594643607091
+    Mean Absolute Error (MAE) - GARCH: 0.05636287978694763
+
+
+Resultados comparativos en el conjunto de Test
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
++-----------+-----------+---------+-------------------------------------------------------+
+| Modelo    | MSE ↓     | MAE ↓   | Interpretación                                        |
++===========+===========+=========+=======================================================+
+| **GARCH** | 0.0040176 | 0.05636 | Mayor error cuadrático y absoluto. Menor capacidad de |
+|           |           |         | ajuste a la dinámica reciente.                        |
++-----------+-----------+---------+-------------------------------------------------------+
+| **M1**    | 0.0012814 | 0.02555 | Mejora notable respecto a GARCH. Captura mejor la     |
+|           |           |         | magnitud de los rendimientos.                         |
++-----------+-----------+---------+-------------------------------------------------------+
+| **M2**    | 0.0011947 | 0.02404 | Mejor desempeño global. Menor error promedio y menor  |
+|           |           |         | desviación en predicciones extremas.                  |
++-----------+-----------+---------+-------------------------------------------------------+
