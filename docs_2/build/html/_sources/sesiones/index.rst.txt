@@ -13,6 +13,7 @@ y deep learning.
    3_MLP
    4_mlp_model
    5_deeplearning
+   6_convolucional
 
 
 

@@ -1,0 +1,544 @@
+Redes convolucionales para series de tiempo
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: ipython3
+
+    #leer los datos de S&P500
+    import pandas as pd
+    sp500_data = pd.read_csv('/Users/nataliaacevedo/SeriesTemporalesDeepLearning/datasets_taller/SP500.csv', parse_dates=['Date'], index_col='Date')
+    print(sp500_data.head())
+
+
+.. parsed-literal::
+
+                log_yield        price
+    Date                              
+    2005-03-28   0.002438  1174.280029
+    2005-03-29  -0.007625  1165.359985
+    2005-03-30   0.013679  1181.410034
+    2005-03-31  -0.000694  1180.589966
+    2005-04-01  -0.006518  1172.920044
+
+
+.. code:: ipython3
+
+    import numpy as np
+    
+    # Calcular el rendimiento logarítmico
+    log_returns = np.log(sp500_data['price'] / sp500_data['price'].shift(1))
+    # Crear un DataFrame con los resultados
+    log_returns = log_returns.to_frame(name="log_yield")
+    log_returns["price"] = sp500_data['price']
+    log_returns = log_returns.dropna()
+    
+    # Save the file
+    log_returns.to_csv("/Users/nataliaacevedo/SeriesTemporalesDeepLearning/datasets_taller/SP500.csv")
+
+
+.. code:: ipython3
+
+    log_returns.describe()
+
+
+
+
+.. raw:: html
+
+    <div>
+    <style scoped>
+        .dataframe tbody tr th:only-of-type {
+            vertical-align: middle;
+        }
+    
+        .dataframe tbody tr th {
+            vertical-align: top;
+        }
+    
+        .dataframe thead th {
+            text-align: right;
+        }
+    </style>
+    <table border="1" class="dataframe">
+      <thead>
+        <tr style="text-align: right;">
+          <th></th>
+          <th>log_yield</th>
+          <th>price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>count</th>
+          <td>4975.000000</td>
+          <td>4975.000000</td>
+        </tr>
+        <tr>
+          <th>mean</th>
+          <td>0.000324</td>
+          <td>2367.603443</td>
+        </tr>
+        <tr>
+          <th>std</th>
+          <td>0.012155</td>
+          <td>1277.862566</td>
+        </tr>
+        <tr>
+          <th>min</th>
+          <td>-0.127652</td>
+          <td>676.530029</td>
+        </tr>
+        <tr>
+          <th>25%</th>
+          <td>-0.004071</td>
+          <td>1319.780029</td>
+        </tr>
+        <tr>
+          <th>50%</th>
+          <td>0.000725</td>
+          <td>1998.979980</td>
+        </tr>
+        <tr>
+          <th>75%</th>
+          <td>0.005713</td>
+          <td>3021.760010</td>
+        </tr>
+        <tr>
+          <th>max</th>
+          <td>0.109572</td>
+          <td>6090.270020</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+
+
+.. code:: ipython3
+
+    import plotly.express as px
+    
+    # Crear una gráfica de línea para la serie log_yield
+    fig = px.line(log_returns, x=log_returns.index, y='price', title='Precio del S&P 500')
+    fig.update_layout(xaxis_title='Fecha', yaxis_title='Log Yield')
+    fig.show()
+
+
+
+.. image:: convolucional_files/convolucional_11_1.png
+
+.. code:: ipython3
+
+    # Crear una gráfica de línea para la serie log_yield
+    fig = px.line(log_returns, x=log_returns.index, y='log_yield', title='Retornos Logarítmicos del S&P 500')
+    fig.update_layout(xaxis_title='Fecha', yaxis_title='Log Yield')
+    fig.show()
+
+
+.. image:: convolucional_files/ convolucional_12_1.png
+
+
+.. code:: ipython3
+
+    print(log_returns.head())
+
+
+.. parsed-literal::
+
+                log_yield        price
+    Date                              
+    2005-03-29  -0.007625  1165.359985
+    2005-03-30   0.013679  1181.410034
+    2005-03-31  -0.000694  1180.589966
+    2005-04-01  -0.006518  1172.920044
+    2005-04-04   0.002724  1176.119995
+
+
+Crear las secuencias
+^^^^^^^^^^^^^^^^^^^^
+
+.. code:: ipython3
+
+    from tensorflow.keras.preprocessing.sequence import pad_sequences # type: ignore
+    
+    def create_sequences_with_padding(data, sequence_length):
+        sequences = []
+        targets = []
+        padded_data = np.pad(data, (sequence_length - 1, 0), mode='constant', constant_values=0)  # Agregar ceros al inicio
+        for i in range(len(data)):  # Iterar sobre todos los datos
+            seq = padded_data[i:i + sequence_length]  # Crear una secuencia de longitud `sequence_length`
+            target = data.iloc[i]  # El objetivo sigue siendo el valor original
+            sequences.append(seq)
+            targets.append(target)
+        return np.array(sequences), np.array(targets)
+    
+    sequence_length = 14  # Longitud de la secuencia
+    train_sequences, train_targets = create_sequences_with_padding(log_returns['log_yield'], sequence_length)
+    
+    print("Número de secuencias:", len(train_sequences))
+
+
+
+.. parsed-literal::
+
+    Número de secuencias: 4975
+
+
+Las secuencias cuando no existe el número total de datos para completar
+muestras de tamaño exacto, se deben complementar. Usar padding.
+
+Escalar datos
+^^^^^^^^^^^^^
+
+.. code:: ipython3
+
+    from sklearn.preprocessing import MinMaxScaler
+    
+    # Escalar las secuencias de entrada
+    scaler_x = MinMaxScaler(feature_range=(-1, 1))
+    X_train_scaled = scaler_x.fit_transform(train_sequences.reshape(-1, train_sequences.shape[-1])).reshape(train_sequences.shape)
+    
+    # Escalar las etiquetas de salida
+    scaler_y = MinMaxScaler(feature_range=(-1, 1))
+    y_train_scaled = scaler_y.fit_transform(train_targets.reshape(-1, 1)).flatten()
+    
+    
+    print("X_train_scaled shape:", X_train_scaled.shape)
+    print("y_train_scaled shape:", y_train_scaled.shape)
+
+
+
+.. parsed-literal::
+
+    X_train_scaled shape: (4975, 14)
+    y_train_scaled shape: (4975,)
+
+
+Crear el modelo
+^^^^^^^^^^^^^^^
+
+Tasa de aprendizaje autoadaptativa
+''''''''''''''''''''''''''''''''''
+
+Ayuda al algoritmo ADAM a reducir la tasa cuando no hay mejoría en la
+pérdida
+
+.. code:: ipython3
+
+    from tensorflow.keras.callbacks import ReduceLROnPlateau # type: ignore
+    
+    # Crear un callback para reducir la tasa de aprendizaje
+    reduce_lr = ReduceLROnPlateau(
+        monitor='val_loss',  # Métrica a monitorear
+        factor=0.5,          # Factor por el cual se reduce la tasa de aprendizaje
+        patience=5,          # Número de épocas sin mejora antes de reducir
+        min_lr=1e-6          # Tasa de aprendizaje mínima
+    )
+
+Estructura mínimo viable para una Red CNN en series de tiempo
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+.. code:: ipython3
+
+    from tensorflow.keras.models import Sequential # type: ignore
+    from tensorflow.keras.layers import Input, Conv1D, Dense, Dropout, BatchNormalization, Flatten# type: ignore
+    from tensorflow.keras.regularizers import l2# type: ignore
+    
+    def build_model(filters, kernel_size, dropout_rate, l2_reg):
+        model = Sequential([
+            # Definir explícitamente la capa de entrada
+            Input(shape=(X_train_scaled.shape[1], 1)),  # Usar sequence_length fijo  # type: ignore
+            # Capa convolucional 1D con regularización L2
+            Conv1D(filters=filters, kernel_size=kernel_size, activation='relu', kernel_regularizer=l2(l2_reg)),
+            BatchNormalization(),  # Normalización por lotes después de la capa convolucional
+            Dropout(dropout_rate),  # Regularización adicional con Dropout
+            # Aplanar la salida para la capa densa
+            Flatten(),  # NECESARIO para conectar Conv1D con Dense
+            # Capa de salida para regresión
+            Dense(1, activation='linear', kernel_regularizer=l2(l2_reg))
+        ])
+        model.compile(optimizer='adam', loss='mae', metrics=['mae'])
+        return model
+
+Uso de Random Search para optimización de Hiperparámetros
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+.. code:: ipython3
+
+    param_distributions = {
+        "model__filters": [16, 32, 64],
+        "model__kernel_size": [2, 3, 4, 5],
+        "model__dropout_rate": [0.1, 0.2, 0.3],
+        "model__l2_reg": [0.001, 0.01, 0.1],  # Intensidad de la regularización L2
+        "batch_size": [16, 32, 64],
+        "epochs": [20, 30, 40]
+    }
+
+.. code:: ipython3
+
+    from sklearn.model_selection import RandomizedSearchCV
+    from sklearn.model_selection import TimeSeriesSplit
+    from scikeras.wrappers import KerasRegressor
+    
+    model_wrapper = KerasRegressor(
+        model=build_model,
+        verbose=0,
+        fit__callbacks=[reduce_lr],  # Pasar el callback aquí
+        fit__validation_split=0.2  # Usar el 20% del conjunto de entrenamiento para validación
+    )
+    
+    # Crear el objeto TimeSeriesSplit
+    tscv = TimeSeriesSplit(n_splits=5)
+    print("Número de divisiones (splits):", tscv.get_n_splits())
+    
+    # Iterar sobre las divisiones
+    for train_index, test_index in tscv.split(X_train_scaled): # type: ignore
+        X_train, X_test = X_train_scaled[train_index], X_train_scaled[test_index] # type: ignore
+        y_train, y_test = y_train_scaled[train_index], y_train_scaled[test_index] # type: ignore
+    
+        print("Tamaño del conjunto de entrenamiento:", X_train.shape, y_train.shape)
+       
+
+
+
+.. parsed-literal::
+
+    Número de divisiones (splits): 5
+    Tamaño del conjunto de entrenamiento: (830, 14) (830,)
+    Tamaño del conjunto de entrenamiento: (1659, 14) (1659,)
+    Tamaño del conjunto de entrenamiento: (2488, 14) (2488,)
+    Tamaño del conjunto de entrenamiento: (3317, 14) (3317,)
+    Tamaño del conjunto de entrenamiento: (4146, 14) (4146,)
+
+
+.. code:: ipython3
+
+    
+    random_search = RandomizedSearchCV(
+        estimator=model_wrapper,
+        param_distributions=param_distributions,
+        n_iter=20,  # Número de combinaciones a probar
+        cv=tscv,  # Validación cruzada específica para series temporales
+        verbose=0,
+        n_jobs=-1  # Usar todos los núcleos disponibles
+    )
+    
+    # Ajustar la búsqueda aleatoria con los datos de entrenamiento
+    random_search.fit(X_train_scaled, y_train_scaled, verbose=0) # type: ignore
+    
+    print("Mejores hiperparámetros encontrados:", random_search.best_params_)
+
+
+.. parsed-literal::
+
+    Mejores hiperparámetros encontrados: {'model__l2_reg': 0.1, 'model__kernel_size': 3, 'model__filters': 64, 'model__dropout_rate': 0.1, 'epochs': 40, 'batch_size': 16}
+
+
+.. code:: ipython3
+
+    from sklearn.model_selection import train_test_split
+    
+    
+    # Ajustar con el mejor modelo los datos escalado de entrenamiento
+    best_model = random_search.best_estimator_.model_
+    
+    # Entrenar el modelo con el programador de tasas de aprendizaje
+    history = best_model.fit(
+        X_train_scaled, y_train_scaled, # type: ignore
+        validation_split=0.2,
+           epochs=200,
+        batch_size=32,
+        callbacks=[reduce_lr]
+    )
+    
+    # El historial de entrenamiento está en history.history
+    import plotly.graph_objects as go
+    
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(y=history.history['loss'], mode='lines', name='Training Loss'))
+    fig.add_trace(go.Scatter(y=history.history['val_loss'], mode='lines', name='Validation Loss'))
+    fig.update_layout(title='Training and Validation Loss over Epochs',
+                      xaxis_title='Epochs',
+                      yaxis_title='Loss')
+    fig.show()
+
+.. image:: convolucional_files/convolucional_13_1.png
+
+.. parsed-literal::
+
+    Epoch 1/200
+    [1m125/125[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 1ms/step - loss: 0.0109 - mae: 0.0062 - val_loss: 0.0067 - val_mae: 0.0021 - learning_rate: 6.2500e-05
+    Epoch 2/200
+    [1m125/125[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 1ms/step - loss: 0.0107 - mae: 0.0061 - val_loss: 0.0061 - val_mae: 0.0014 - learning_rate: 6.2500e-05
+    Epoch 3/200
+    [1m125/125[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 1ms/step - loss: 0.0106 - mae: 0.0059 - val_loss: 0.0060 - val_mae: 0.0013 - learning_rate: 6.2500e-05
+    Epoch 4/200
+    [1m125/125[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 1ms/step - loss: 0.0106 - mae: 0.0060 - val_loss: 0.0067 - val_mae: 0.0021 - learning_rate: 6.2500e-05
+    Epoch 5/200
+    [1m125/125[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 1ms/step - loss: 0.0108 - mae: 0.0061 - val_loss: 0.0060 - val_mae: 0.0013 - learning_rate: 6.2500e-05
+    Epoch 6/200
+    [1m125/125[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 1ms/step - loss: 0.0107 - mae: 0.0060 - val_loss: 0.0073 - val_mae: 0.0026 - learning_rate: 6.2500e-05
+    Epoch 198/200
+    [1m125/125[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 1ms/step - loss: 0.0104 - mae: 0.0058 - val_loss: 0.0057 - val_mae: 0.0011 - learning_rate: 1.0000e-06
+    Epoch 199/200
+    [1m125/125[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 1ms/step - loss: 0.0104 - mae: 0.0058 - val_loss: 0.0058 - val_mae: 0.0012 - learning_rate: 1.0000e-06
+    Epoch 200/200
+    [1m125/125[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 1ms/step - loss: 0.0106 - mae: 0.0060 - val_loss: 0.0057 - val_mae: 0.0011 - learning_rate: 1.0000e-06
+
+
+
+
+Predicciones en el entrenamiento
+''''''''''''''''''''''''''''''''
+
+.. code:: ipython3
+
+    import matplotlib.pyplot as plt
+    
+    # Predecir los valores en el conjunto de entrenamiento
+    train_predictions_scaled = best_model.predict(X_train_scaled) # type: ignore
+    
+    # Desescalar las predicciones y los valores reales
+    train_predictions = scaler_y.inverse_transform(train_predictions_scaled.reshape(-1, 1)).flatten() # type: ignore
+    train_actual = scaler_y.inverse_transform(y_train_scaled.reshape(-1, 1)).flatten() # type: ignore
+    
+    # Graficar las predicciones frente a los valores reales
+    plt.figure(figsize=(12, 6))
+    plt.plot(train_actual, label="Valores reales", color="blue")
+    plt.plot(train_predictions, label="Predicciones", color="orange", linestyle="--")
+    plt.title("Predicciones vs Valores reales (Conjunto de entrenamiento)")
+    plt.xlabel("Índice")
+    plt.ylabel("Valor")
+    plt.legend()
+    plt.show()
+
+
+
+.. parsed-literal::
+
+    [1m156/156[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 484us/step
+
+
+
+.. image:: convolucional_files/convolucional_22_1.png
+
+
+Predicciones en Test
+''''''''''''''''''''
+
+.. code:: ipython3
+
+    # Predecir los valores en el conjunto de prueba
+    test_predictions_scaled = best_model.predict(X_train_scaled[test_index])
+    
+    # Desescalar las predicciones y los valores reales
+    test_predictions = scaler_y.inverse_transform(test_predictions_scaled.reshape(-1, 1)).flatten()
+    test_actual = scaler_y.inverse_transform(y_test.reshape(-1, 1)).flatten()
+    
+    # Graficar las predicciones frente a los valores reales
+    plt.figure(figsize=(12, 6))
+    plt.plot(test_actual, label="Valores reales", color="blue")
+    plt.plot(test_predictions, label="Predicciones", color="orange", linestyle="--")
+    plt.title("Predicciones vs Valores reales (Conjunto de prueba)")
+    plt.xlabel("Índice")
+    plt.ylabel("Valor")
+    plt.legend()
+    plt.show()
+
+
+.. parsed-literal::
+
+    [1m26/26[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 574us/step
+
+
+
+.. image:: convolucional_files/convolucional_24_1.png
+
+
+.. code:: ipython3
+
+    from sklearn.metrics import mean_absolute_error, mean_squared_error
+    
+    # Calcular MAE y MSE
+    mae = mean_absolute_error(test_actual, test_predictions) # pyright: ignore[reportUndefinedVariable]
+    mse = mean_squared_error(test_actual, test_predictions) # pyright: ignore[reportUndefinedVariable]
+    
+    print(f"Error absoluto medio (MAE): {mae}")
+    print(f"Error cuadrático medio (MSE): {mse}")
+
+
+.. parsed-literal::
+
+    Error absoluto medio (MAE): 0.00014275193203755972
+    Error cuadrático medio (MSE): 3.7687280885778426e-08
+
+
+Prediccion en el problema completo
+''''''''''''''''''''''''''''''''''
+
+Predicción del valor del Indice SP500 usando la rentabilidad
+pronosticada y la media movil del precio en el conjunto de test
+
+.. code:: ipython3
+
+    import plotly.graph_objects as go
+    
+    # Calcular el precio acumulativo a partir de los rendimientos pronosticados
+    initial_price = log_returns['price'].iloc[train_index[-1]]  # Último precio del conjunto de entrenamiento
+    test_prices = [initial_price]
+    
+    for ret in test_predictions:
+        next_price = test_prices[-1] * (1 + ret)  # Calcular el siguiente precio
+        test_prices.append(next_price)
+    
+    # Convertir a un array numpy
+    test_prices = np.array(test_prices[1:])  # Excluir el precio inicial
+    
+    # Aplicar una media móvil
+    window_size = 5  # Tamaño de la ventana para la media móvil
+    smoothed_prices = np.convolve(test_prices, np.ones(window_size)/window_size, mode='valid')
+    
+    # Crear la gráfica con Plotly
+    fig = go.Figure()
+    
+    # Agregar los precios pronosticados
+    fig.add_trace(go.Scatter(
+        x=list(range(len(test_prices))),
+        y=test_prices,
+        mode='lines',
+        name='Precios pronosticados',
+        line=dict(color='blue', width=2)
+    ))
+    
+    # Agregar los precios suavizados (ajustar el índice x)
+    fig.add_trace(go.Scatter(
+        x=list(range(window_size - 1, len(test_prices))),
+        y=smoothed_prices,
+        mode='lines',
+        name='Precios suavizados (Media móvil)',
+        line=dict(color='orange', width=2, dash='dash')
+    ))
+    
+    # Configurar el diseño de la gráfica
+    fig.update_layout(
+        title='Precios pronosticados vs Precios suavizados',
+        xaxis_title='Índice',
+        yaxis_title='Precio',
+        hovermode='x unified',
+        template='plotly_white',
+        width=1200,
+        height=600,
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1
+        )
+    )
+    
+    fig.show()
+
+.. image:: convolucional_files/convolucional_25_1.png
+
+
+
